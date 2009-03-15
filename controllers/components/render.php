@@ -3,14 +3,17 @@ App::import('Vendor', 'Mobile.toInlineCSSDoCoMo',
 	array('file' => 'toInlineCSSDoCoMo.php'));
 
 class RenderComponent extends Object {
-	var $components = array('Mobile.Discriminant');
+	var $components = array('MobileKit.Discriminant');
+	var $layoutPath = 'mobile';
+	var $viewPath = 'mobile';
 	
 	function beforeRender(&$controller)
 	{
 		if ($this->Discriminant->isMobile()) {
-			$controller->layoutPath = 'mobile';
+			$controller->layoutPath = $this->layoutPath;
 			if ($controller->viewPath !== 'errors') {
-				$controller->viewPath = $controller->viewPath.DS.'mobile';
+				$controller->viewPath =
+					$controller->viewPath.DS.$this->viewPath;
 			}
 		}
 	}
