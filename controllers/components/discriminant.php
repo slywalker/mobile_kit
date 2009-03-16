@@ -4,10 +4,10 @@ class DiscriminantComponent extends Object {
 	var $carrier = null;
 	
 	var $agents = array(
-		'docomo' => array('DoCoMo'),
-		'ezweb' => array('UP.Browser'),
-		'softbank' => array('SoftBank', 'Vodafone', 'J-PHONE'),
-		'willcom' => array('WILLCOM', 'DDIPOCKET'),
+		'docomo' => '/^DoCoMo.+$/',
+		'ezweb' => '/^.+UP.Browser.+$/',
+		'softbank' => '/^(SoftBank|Vodafone|J-PHONE).+$/',
+		'willcom' => '/^Mozilla.+(WILLCOM|DDIPOCKET|MobilePhone).+$/',
 	);
 
 	function initialize(&$controller)
@@ -26,13 +26,11 @@ class DiscriminantComponent extends Object {
 
 	function _discrim()
 	{
-		foreach ($this->agents as $carrier=>$agents) {
-			foreach ($agents as $agent) {
-				if (strpos($this->userAgent, $agent) !== false) {
+		foreach ($this->agents as $carrier=>$regix) {
+				if (preg_match($regix, $this->userAgent)) {
 					$this->carrier = $carrier;
 					return true;
 				}
-			}
 		}
 		return false;
 	}
