@@ -6,8 +6,8 @@ class DiscriminantComponent extends Object {
 	
 	var $agents = array(
 		'docomo' => '/^DoCoMo.+$/',
-		'ezweb' => '/^.+UP.Browser.+$/',
-		'softbank' => '/^(SoftBank|Vodafone|J-PHONE).+$/',
+		'ezweb' => '/^KDDI.+UP.Browser.+$/',
+		'softbank' => '/^(SoftBank|Vodafone|J-PHONE|MOT-C).+$/',
 		'willcom' => '/^Mozilla.+(WILLCOM|DDIPOCKET|MobilePhone).+$/',
 	);
 
