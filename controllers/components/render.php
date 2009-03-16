@@ -7,10 +7,17 @@ class RenderComponent extends Object {
 	var $layoutPath = 'mobile';
 	var $viewPath = 'mobile';
 	var $encoding = null;
+	var $mobile = array();
+
+	function initialize(&$controller)
+	{
+		$this->mobile = $this->Discriminant->getData();
+		var_dump($this->mobile);
+	}
 	
 	function beforeRender(&$controller)
 	{
-		if ($this->Discriminant->isMobile()) {
+		if ($this->isMobile()) {
 			$controller->layoutPath = $this->layoutPath;
 			if ($controller->viewPath !== 'errors') {
 				$controller->viewPath =
@@ -21,10 +28,10 @@ class RenderComponent extends Object {
 	
 	function shutdown(&$controller)
 	{
-		if ($this->Discriminant->isMobile()) {
+		if ($this->isMobile()) {
 			//$controller->output = $this->emoji($controller->output);
 			$controller->output = $this->_hankaku($controller->output);
-			if ($this->Discriminant->carrier === 'docomo') {
+			if ($this->mobile['carrier'] === 'docomo') {
 				$controller->output
 					= $this->_toInlineCSSDoCoMo($controller->output);
 			}
@@ -64,17 +71,17 @@ class RenderComponent extends Object {
 	
 	function isMobile()
 	{
-		return $this->Discriminant->isMobile();
+		return !is_null($this->mobile['carrier']);
 	}
 
 	function getCarrier()
 	{
-		return $this->Discriminant->getCarrier();
+		return $this->mobile['carrier'];
 	}
 
 	function getSerial()
 	{
-		return $this->Discriminant->getSerial();
+		return $this->mobile['serial'];
 	}
 	
 	function emoji($output)

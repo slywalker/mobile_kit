@@ -11,29 +11,21 @@ class DiscriminantComponent extends Object {
 		'willcom' => '/^Mozilla.+(WILLCOM|DDIPOCKET|MobilePhone).+$/',
 	);
 
-	function initialize(&$controller)
+	function __construct()
 	{
+		parent::__construct();
+		
 		$this->userAgent = env('HTTP_USER_AGENT');
 		$this->_discrim();
 		$this->_getSerial();
 	}
-
-	function isMobile()
-	{
-		if ($this->carrier) {
-			return true;
-		}
-		return false;
-	}
 	
-	function getCarrier()
+	function getData()
 	{
-		return $this->carrier;
-	}
-	
-	function getSerial()
-	{
-		return $this->serial;
+		return array(
+			'carrier'=>$this->carrier,
+			'serial'=>$this->serial,
+		);
 	}
 
 	function _discrim()
