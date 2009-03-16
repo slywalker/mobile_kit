@@ -49,6 +49,16 @@ class RenderComponent extends Object {
 	{
 		return $this->Discriminant->isMobile();
 	}
+
+	function getCarrier()
+	{
+		return $this->Discriminant->getCarrier();
+	}
+
+	function getSerial()
+	{
+		return $this->Discriminant->getSerial();
+	}
 	
 	function emoji($output)
 	{
