@@ -6,6 +6,7 @@ class RenderComponent extends Object {
 	var $components = array('MobileKit.Discriminant');
 	var $layoutPath = 'mobile';
 	var $viewPath = 'mobile';
+	var $encoding = null;
 	
 	function beforeRender(&$controller)
 	{
@@ -27,7 +28,18 @@ class RenderComponent extends Object {
 				$controller->output
 					= $this->_toInlineCSSDoCoMo($controller->output);
 			}
-			header('Content-Type: application/xhtml+xml; charset=UTF-8');
+			
+			if (!is_null($this->encoding)
+			&& $this->encoding !== Configure::read('App.encoding')) {
+				$controller->output
+					= mb_convert_encoding(
+						$controller->output,
+						$this->encoding,
+						Configure::read('App.encoding')
+					);
+			}
+			header('Content-Type: application/xhtml+xml; charset='
+				.$this->encoding);
 		}
 	}
 	
@@ -43,6 +55,11 @@ class RenderComponent extends Object {
 	{
 		return toInlineCSSDoCoMo::getInstance()
 			->setBaseDir('http://'.env('HTTP_HOST'))->apply($output);
+	}
+	
+	function setEncoding($encoding)
+	{
+		return $this->encoding = $encoding;
 	}
 	
 	function isMobile()
