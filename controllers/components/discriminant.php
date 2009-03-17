@@ -61,7 +61,7 @@ class DiscriminantComponent extends Object {
 		if ($this->carrier === 'docomo') {
 			$serial = env('HTTP_X_UP_SUBNO');
 		}
-		elseif($this->carrier === 'softbank'){
+		elseif ($this->carrier === 'softbank') {
 			if (preg_match("/\/(SN[a-zA-Z0-9]+)\s/",
 				$this->userAgent, $match)){
 				$serial = $match[1];
