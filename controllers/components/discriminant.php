@@ -8,7 +8,12 @@ class DiscriminantComponent extends Object {
 		'docomo' => '/^DoCoMo.+$/',
 		'ezweb' => '/^KDDI.+UP.Browser.+$/',
 		'softbank' => '/^(SoftBank|Vodafone|J-PHONE|MOT-C).+$/',
-		'willcom' => '/^Mozilla.+(WILLCOM|DDIPOCKET|MobilePhone).+$/',
+		'iphone' => '/^Mozilla.+iPhone.+$/',
+		'willcom' => array(
+			'/^Mozilla.+(WILLCOM|DDIPOCKET|MobilePhone).+$/',
+			'/^PDXGW.+$/',
+		),
+		'emobile' => '/^emobile.+$/',
 	);
 
 	function __construct()
@@ -31,9 +36,19 @@ class DiscriminantComponent extends Object {
 	function _discrim()
 	{
 		foreach ($this->agents as $carrier=>$regix) {
-			if (preg_match($regix, $this->userAgent)) {
-				$this->carrier = $carrier;
-				return true;
+			if (is_array($regix)) {
+				foreach ($regix as $reg) {
+					if (preg_match($reg, $this->userAgent)) {
+						$this->carrier = $carrier;
+						return true;
+					}
+				}
+			}
+			else {
+				if (preg_match($regix, $this->userAgent)) {
+					$this->carrier = $carrier;
+					return true;
+				}
 			}
 		}
 		return false;
