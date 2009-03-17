@@ -5,11 +5,7 @@ App::import('Core', array('View', 'Controller'));
 Mock::generate('Helper', 'MockBackendHelper', array('testMethod'));
 
 class GpsFormHelperTestCase extends CakeTestCase {
-/**
- * setUp
- *
- * @return void
- **/
+
 	function startTest() {
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		Router::parse('/');
@@ -23,11 +19,6 @@ class GpsFormHelperTestCase extends CakeTestCase {
 		}
 	}
 
-/**
- * start Case - switch view paths
- *
- * @return void
- **/
 	function startCase() {
 		$this->_viewPaths = Configure::read('viewPaths');
 		Configure::write('viewPaths', array(

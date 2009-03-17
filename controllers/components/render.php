@@ -28,7 +28,6 @@ class RenderComponent extends Object {
 	function shutdown(&$controller)
 	{
 		if ($this->isMobile()) {
-			//$controller->output = $this->emoji($controller->output);
 			$controller->output = $this->_hankaku($controller->output);
 			if ($this->mobile['carrier'] === 'docomo') {
 				$controller->output
@@ -81,41 +80,6 @@ class RenderComponent extends Object {
 	function getSerial()
 	{
 		return $this->mobile['serial'];
-	}
-	
-	function emoji($output)
-	{
-		// 絵文字変換
-		App::import(
-			'Vendor',
-			'MobilePictogramConverter',
-			array(
-				'file' =>
-				 'MobilePictogramConverter/MobilePictogramConverter.php'
-			)
-		);
-		$Mpc = MobilePictogramConverter::factory(
-			$output,
-			MPC_FROM_FOMA,
-			MPC_FROM_CHARSET_UTF8,
-			MPC_FROM_OPTION_WEB
-		);
-		$Mpc->setImagePath(Router::url('/img'));
-
-		if ($this->mobile->isDoCoMo()) {
-			$to = MPC_TO_FOMA;
-			$option = MPC_TO_OPTION_RAW;
-		} elseif ($this->mobile->isSoftBank()) {
-			$to = MPC_TO_SOFTBANK;
-			$option = MPC_TO_OPTION_WEB;
-		} elseif ($this->mobile->isEZweb()) {
-			$to = MPC_TO_EZWEB;
-			$option = MPC_TO_OPTION_WEB;
-		} else {
-			$to = str_replace('MPC_', '', strtoupper(get_class($Mpc)));
-			$option = MPC_TO_OPTION_IMG;
-		}
-		return $Mpc->Convert($to, $option, MPC_TO_CHARSET_UTF8);
 	}
 }
 ?>

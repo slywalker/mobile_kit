@@ -10,3 +10,4 @@ class GpsFormHelper extends AppHelper {
 		$this->mobile = DiscriminantComponent::getData();
 	}
 }
+?>
