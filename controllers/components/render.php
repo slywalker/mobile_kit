@@ -12,7 +12,6 @@ class RenderComponent extends Object {
 	function initialize(&$controller)
 	{
 		$this->mobile = $this->Discriminant->getData();
-		var_dump($this->mobile);
 	}
 	
 	function beforeRender(&$controller)
