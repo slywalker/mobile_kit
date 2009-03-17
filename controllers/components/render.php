@@ -1,5 +1,5 @@
 <?php
-App::import('Vendor', 'Mobile.toInlineCSSDoCoMo',
+App::import('Vendor', 'MobileKit.toInlineCSSDoCoMo',
 	array('file' => 'toInlineCSSDoCoMo.php'));
 
 class RenderComponent extends Object {
