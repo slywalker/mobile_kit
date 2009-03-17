@@ -16,6 +16,12 @@ class DiscriminantTestCase extends CakeTestCase {
 	
 	function testDiscrim()
 	{
+		$userAgent = '';
+		$this->Controller->Discriminant->userAgent = $userAgent;
+		$this->assertFalse($this->Controller->Discriminant->_discrim());
+		$carrier = $this->Controller->Discriminant->carrier;
+		$this->assertTrue(is_null($carrier));
+
 		$userAgent = 'DoCoMo/2.0 P903i';
 		$this->Controller->Discriminant->userAgent = $userAgent;
 		$this->assertTrue($this->Controller->Discriminant->_discrim());
