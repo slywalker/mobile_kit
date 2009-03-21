@@ -1,6 +1,6 @@
 <?php
-App::import('Vendor', 'MobileKit.toInlineCSSDoCoMo',
-	array('file' => 'toInlineCSSDoCoMo.php'));
+App::import('Vendor', 'MobileKit.HTML_CSS_Mobile',
+	array('file' => 'HTML/CSS/Mobile.php'));
 
 class RenderComponent extends Object {
 	var $components = array('MobileKit.Discriminant');
@@ -29,22 +29,26 @@ class RenderComponent extends Object {
 	{
 		if ($this->isMobile()) {
 			$controller->output = $this->_hankaku($controller->output);
+			/*
 			if ($this->mobile['carrier'] === 'docomo') {
 				$controller->output
 					= $this->_toInlineCSSDoCoMo($controller->output);
 			}
-			
+			*/
+			$encoding = Configure::read('App.encoding');
+			/*
 			if (!is_null($this->encoding)
-			&& $this->encoding !== Configure::read('App.encoding')) {
+			&& $this->encoding !== $encoding) {
 				$controller->output
 					= mb_convert_encoding(
 						$controller->output,
 						$this->encoding,
 						Configure::read('App.encoding')
 					);
+				$encoding = $this->encoding;
 			}
-			header('Content-Type: application/xhtml+xml; charset='
-				.$this->encoding);
+			*/
+			header('Content-Type: application/xhtml+xml; charset='.$encoding);
 		}
 	}
 	
@@ -58,8 +62,9 @@ class RenderComponent extends Object {
 	
 	function _toInlineCSSDoCoMo($output)
 	{
-		return toInlineCSSDoCoMo::getInstance()
-			->setBaseDir('http://'.env('HTTP_HOST'))->apply($output);
+		$toInline = HTML_CSS_Mobile::getInstance();
+		$toInline->setBaseDir('http://'.env('HTTP_HOST'));
+		return $toInline->apply($output);
 	}
 	
 	function setEncoding($encoding)

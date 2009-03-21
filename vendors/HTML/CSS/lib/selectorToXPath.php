@@ -2,11 +2,12 @@
 /**
  * selectorToXPath.php
  * 
- * @author Daichi Kamemoto <daichi@asial.co.jp>
+ * @author Daichi Kamemoto <daikame@gamil.com>
+ */
 /**
  * The MIT License
  *
- * Copyright (c) 2008 Asial Corporation Japan, Daichi Kamemoto <daichi@asial.co.jp>
+ * Copyright (c) 2008 Daichi Kamemoto <daikame@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,15 +26,22 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- */ 
+ */
 
 /**
- * CSSセレクタをXPathクエリに置換する。
+ * selectorToXPath CSSセレクタをXPathクエリに置換する。
+ *
  * HTML::Selector::XPath
  * http://search.cpan.org/dist/HTML-Selector-XPath/lib/HTML/Selector/XPath.pm
  * のPHP移殖版
  *   理解のいたる範囲で移植したので劣化コピーかもしれない。
- */ 
+ * 
+ * @package HTML_CSS_Mobile
+ * @version $id$
+ * @copyright 2008 yudoufu
+ * @author Daichi Kamemoto(a.k.a yudoufu) <daikame@gmail.com> 
+ * @license MIT License
+ */
 class selectorToXPath
 {
   /**
@@ -42,16 +50,19 @@ class selectorToXPath
   private static $regex = array(
       'element'    => '/^(\*|[a-z_][a-z0-9_-]*)/i',
       'id_class'   => '/^([#.])([a-z0-9*_-]*)/i',
-      'attribute'  => '/^\[\s*([^~\|=\s]+)\s*([~\|]?=)\s*"([^"]+)"\s*\]/i',
-      'attr_box'   => '/^\[([^\]]*)\]/i',
-      'attr_not'   => '/^:not\((.*?)\)/i',
+      'attribute'  => '/^\[\s*([^~|=\s]+)\s*([~|]?=)\s*"([^"]+)"\s*\]/',
+      'attr_box'   => '/^\[([^\]]*)\]/',
+      'attr_not'   => '/^:not\(([^)]*)\)/i',
       'pseudo'     => '/^:([a-z0-9_-]+)(\(([a-z0-9_-]+)\))?/i',
       'combinator' => '/^(\s*[>+~\s])/i',
-      'comma'      => '/^,/i',
+      'comma'      => '/^,/',
     );
 
   /**
-   * CSSセレクタをXPathクエリに再構成する
+   * toXPath CSSセレクタをXPathクエリに再構成する
+   * 
+   * @param string $input_selector 
+   * @return string 
    */
   public static function toXPath($input_selector)
   {
@@ -222,7 +233,12 @@ class selectorToXPath
   }
 
   /**
-   * 正規表現でマッチをしつつ、マッチ部分を削除
+   * pregMatchDelete 正規表現でマッチをしつつ、マッチ部分を削除
+   * 
+   * @param string $pattern 
+   * @param string $subject 
+   * @param array $matches 
+   * @return boolean
    */
   public static function pregMatchDelete($pattern, &$subject, &$matches)
   {
