@@ -5,7 +5,7 @@
 */
 uses('Xml');
 
-class Emoji extends AppModel {
+class Emoji extends MobileKitAppModel {
 	var $name = 'Emoji';
 	var $useTable = false;
 
