@@ -270,7 +270,8 @@ class HTML_CSS_Mobile
 			if ($node->tagName == 'link' && $href = $node->attributes->getNamedItem('href'))
 			{
 				// linkタグの場合
-				if (!file_exists($this->base_dir . $href->nodeValue))
+				//if (!file_exists($this->base_dir . $href->nodeValue))
+				if (!file_get_contents($this->base_dir . $href->nodeValue))
 				{
 					if ($this->mode !== 'strict') continue;
 					throw new UnexpectedValueException('ERROR: ' . $this->base_dir . $href->nodeValue . ' file does not exist');
