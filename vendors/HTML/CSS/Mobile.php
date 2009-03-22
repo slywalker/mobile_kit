@@ -160,11 +160,13 @@ class HTML_CSS_Mobile
 				break;
 		}
 
+		/*
 		if ($doc_encoding != 'UTF-8')
 		{
 			$document = str_replace(array('UTF-8', $html_encoding), array('@####UTF8####@', 'UTF-8'), $document);
 			$document = mb_convert_encoding($document, 'UTF-8', $doc_encoding);
 		}
+		*/
 		/****************************************
 		 * 本処理
 		 ****************************************/
@@ -270,12 +272,13 @@ class HTML_CSS_Mobile
 			if ($node->tagName == 'link' && $href = $node->attributes->getNamedItem('href'))
 			{
 				// linkタグの場合
-				//if (!file_exists($this->base_dir . $href->nodeValue))
-				if (!file_get_contents($this->base_dir . $href->nodeValue))
+				/*
+				if (!file_exists($this->base_dir . $href->nodeValue))
 				{
 					if ($this->mode !== 'strict') continue;
 					throw new UnexpectedValueException('ERROR: ' . $this->base_dir . $href->nodeValue . ' file does not exist');
 				}
+				*/
 
 				$css_string = file_get_contents($this->base_dir . $href->nodeValue);
 			}
@@ -324,11 +327,13 @@ class HTML_CSS_Mobile
 	private function _loadCSS($css_string)
 	{
 		// 文字コードをDOM利用のためにUTF-8化
+		/*
 		$css_encoding = mb_detect_encoding($css_string, 'UTF-8, eucjp-win, sjis-win, iso-2022-jp');
 		if ($css_encoding != 'UTF-8')
 		{
 			$css_string = mb_convert_encoding($css_string, 'UTF-8', $css_encoding);
 		}
+		*/
 
 		if (is_null($this->html_css))
 		{
