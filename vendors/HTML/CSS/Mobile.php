@@ -145,6 +145,7 @@ class HTML_CSS_Mobile
 		$document = preg_replace('/&(#(?:\d+|x[0-9a-fA-F]+)|[A-Za-z0-9]+);/', 'HTMLCSSINLINERESCAPE%$1%::::::::', $document);
 
 		// 機種依存文字がエラーになる問題を回避するため、UTF-8に変換して処理
+		/*
 		$doc_encoding = mb_detect_encoding($document, 'sjis-win, UTF-8, eucjp-win');
 
 		switch (strtolower($doc_encoding))
@@ -160,7 +161,6 @@ class HTML_CSS_Mobile
 				break;
 		}
 
-		/*
 		if ($doc_encoding != 'UTF-8')
 		{
 			$document = str_replace(array('UTF-8', $html_encoding), array('@####UTF8####@', 'UTF-8'), $document);
@@ -237,11 +237,13 @@ class HTML_CSS_Mobile
 		 ****************************************/
 
 		// 文字コードを元に戻す
+		/*
 		if ($doc_encoding != 'UTF-8')
 		{
 			$result = mb_convert_encoding($result, $doc_encoding, 'UTF-8');
 			$result = str_replace(array('UTF-8', '@####UTF8####@'), array($html_encoding, 'UTF-8'), $result);
 		}
+		*/
 
 		// エスケープしていた参照を復元
 		$result = preg_replace('/HTMLCSSINLINERESCAPE%(#(?:\d+|x[0-9a-fA-F]+)|[A-Za-z0-9]+)%::::::::/', '&$1;', $result);

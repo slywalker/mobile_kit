@@ -28,15 +28,12 @@ class RenderComponent extends Object {
 	function shutdown(&$controller)
 	{
 		if ($this->isMobile()) {
-			$controller->output = $this->_hankaku($controller->output);
-			/*
 			if ($this->mobile['carrier'] === 'docomo') {
 				$controller->output
 					= $this->_toInlineCSSDoCoMo($controller->output);
 			}
-			*/
+			$controller->output = $this->_hankaku($controller->output);
 			$encoding = Configure::read('App.encoding');
-			/*
 			if (!is_null($this->encoding)
 			&& $this->encoding !== $encoding) {
 				$controller->output
@@ -47,7 +44,6 @@ class RenderComponent extends Object {
 					);
 				$encoding = $this->encoding;
 			}
-			*/
 			header('Content-Type: application/xhtml+xml; charset='.$encoding);
 		}
 	}
