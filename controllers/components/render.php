@@ -1,5 +1,4 @@
 <?php
-App::import('Core', 'Xml');
 App::import('Vendor', 'MobileKit.selectorToXPath',
 	array('file' => 'selectorToXPath.php'));
 
