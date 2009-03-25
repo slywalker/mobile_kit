@@ -31,7 +31,7 @@ class RenderComponent extends Object {
 	{
 		if ($this->isMobile()) {
 			$controller->output = $this->_hankaku($controller->output);
-			header('Content-Type: application/xhtml+xml; charset=UTF-8');
+			header("Content-type: application/xhtml+xml");
 		}
 	}
 	
