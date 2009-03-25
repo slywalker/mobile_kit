@@ -6,7 +6,7 @@ class DiscriminantComponent extends Object {
 	
 	var $agents = array(
 		'docomo' => '/^DoCoMo.+$/',
-		'kddi' => '/^KDDI.+UP.Browser.+$/',
+		'kddi' => '/(^KDDI.+UP.Browser.+$|^UP.Browser.+$)/',
 		'softbank' => '/^(SoftBank|Vodafone|J-PHONE|MOT-C).+$/',
 		'iphone' => '/^Mozilla.+iPhone.+$/',
 		'willcom' => array(
@@ -22,6 +22,9 @@ class DiscriminantComponent extends Object {
 		
 		$this->userAgent = env('HTTP_USER_AGENT');
 		$this->_discrim();
+		if ($this->carrier === 'no3Gkddi') {
+			die('KDDIの古い機種ではこのページを表示できません');
+		}
 		$this->_getSerial();
 	}
 	

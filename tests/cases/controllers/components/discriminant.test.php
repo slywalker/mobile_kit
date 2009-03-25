@@ -58,6 +58,12 @@ class DiscriminantTestCase extends CakeTestCase {
 		$carrier = $this->Controller->Discriminant->carrier;
 		$this->assertEqual($carrier, 'kddi');
 
+		$userAgent = 'UP.Browser/3.01-HI01/HI02 UP.Link/3.2.1.2';
+		$this->Controller->Discriminant->userAgent = $userAgent;
+		$this->assertTrue($this->Controller->Discriminant->_discrim());
+		$carrier = $this->Controller->Discriminant->carrier;
+		$this->assertEqual($carrier, 'kddi');
+
 		$userAgent = 'Mozilla/3.0(WILLCOM;SANYO/WX310SA/2;1/1/C128) NetFront/3.3';
 		$this->Controller->Discriminant->userAgent = $userAgent;
 		$this->assertTrue($this->Controller->Discriminant->_discrim());
