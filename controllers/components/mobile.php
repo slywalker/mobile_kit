@@ -2,43 +2,41 @@
 class MobileComponent extends Object {
 	var $userAgent = null;
 	var $carrier = null;
-	var $serial = null;
+	var $uid = null;
 	
 	var $_agents = array(
-		'docomo' => '/^DoCoMo.+$/',
-		'kddi' => '/(^KDDI.+UP.Browser.+$|^UP.Browser.+$)/',
-		'softbank' => '/^(SoftBank|Vodafone|J-PHONE|MOT-C).+$/',
-		'iphone' => '/^Mozilla.+iPhone.+$/',
+		'docomo' => array('/^DoCoMo.+$/'),
+		'kddi' => array(
+			'/^KDDI.+UP.Browser.+$/',
+			'/^UP.Browser.+$/',
+		),
+		'softbank' => array('/^(SoftBank|Vodafone|J-PHONE|MOT-C).+$/'),
+		'iphone' => array('/^Mozilla.+iPhone.+$/'),
 		'willcom' => array(
 			'/^Mozilla.+(WILLCOM|DDIPOCKET|MobilePhone).+$/',
 			'/^PDXGW.+$/',
 		),
-		'emobile' => '/^emobile.+$/',
+		'emobile' => array('/^emobile.+$/'),
 	);
 
-	function initialize(&$controller)
-	{
+	function __construct() {
 		$this->userAgent = env('HTTP_USER_AGENT');
-		$this->setCarrier($this->userAgent);
-		$this->setSerial();
+		$this->setCarrier();
+		$this->setUid();
 	}
-	
+
 	function setCarrier($userAgent = null)
 	{
 		if (is_null($userAgent)) {
-			$userAgent = $this->userAgent = env('HTTP_USER_AGENT');
+			$userAgent = $this->userAgent;
+		}
+		if (is_null($userAgent)) {
+			return $this->carrier = null;
 		}
 
 		foreach ($this->_agents as $carrier=>$regix) {
-			if (is_array($regix)) {
-				foreach ($regix as $reg) {
-					if (preg_match($reg, $userAgent)) {
-						return $this->carrier = $carrier;
-					}
-				}
-			}
-			else {
-				if (preg_match($regix, $userAgent)) {
+			foreach ($regix as $reg) {
+				if (preg_match($reg, $userAgent)) {
 					return $this->carrier = $carrier;
 				}
 			}
@@ -47,22 +45,26 @@ class MobileComponent extends Object {
 	}
 	
 	// http://xxxxxxxx?guid=ON DoCoMo
-	function setSerial()
+	function setUid($carrier = null)
 	{
-		$serial = null;
-		if ($this->carrier === 'docomo') {
-			$serial = env('HTTP_X_UP_SUBNO');
+		if (is_null($carrier)) {
+			$carrier = $this->carrier;
 		}
-		elseif ($this->carrier === 'softbank') {
-			if (preg_match("/\/(SN[a-zA-Z0-9]+)\s/",
-				$this->userAgent, $match)){
-				$serial = $match[1];
-			}
+		if (is_null($carrier)) {
+			return $this->uid = null;
 		}
-		elseif ($this->carrier === 'kddi') {
-			$serial = env('HTTP_X_UP_SUBNO');
+
+		$uid = null;
+		if ($carrier === 'docomo') {
+			$uid = env('HTTP_X_DCMGUID');
 		}
-		return $this->serial = $serial;
+		elseif ($carrier === 'softbank') {
+			$uid = env('HTTP_X_JPHONE_UID');
+		}
+		elseif ($carrier === 'kddi') {
+			$uid = env('HTTP_X_UP_SUBNO');
+		}
+		return $this->uid = $uid;
 	}
 }
 ?>

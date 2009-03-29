@@ -1,16 +1,12 @@
 <?php
 class RenderComponent extends Object {
-	var $Controller = null;
 	var $components = array('MobileKit.Mobile');
-
-	var $Mobile = null;
 	var $layoutPath = 'mobile';
 	var $viewPath = 'mobile';
 
 	function initialize(&$controller)
 	{
-		$this->Controller =& $controller;
-		if ($this->isMobile()) {
+		if ($this->isMobile() && $controller->data) {
 			mb_convert_variables('UTF-8', 'SJIS-win', $controller->data);
 		}
 	}
