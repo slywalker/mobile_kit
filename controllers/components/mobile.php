@@ -1,10 +1,10 @@
 <?php
-class DiscriminantComponent extends Object {
+class MobileComponent extends Object {
 	var $userAgent = null;
 	var $carrier = null;
 	var $serial = null;
 	
-	var $agents = array(
+	var $_agents = array(
 		'docomo' => '/^DoCoMo.+$/',
 		'kddi' => '/(^KDDI.+UP.Browser.+$|^UP.Browser.+$)/',
 		'softbank' => '/^(SoftBank|Vodafone|J-PHONE|MOT-C).+$/',
@@ -16,49 +16,38 @@ class DiscriminantComponent extends Object {
 		'emobile' => '/^emobile.+$/',
 	);
 
-	function __construct()
+	function initialize(&$controller)
 	{
-		parent::__construct();
-		
 		$this->userAgent = env('HTTP_USER_AGENT');
-		$this->_discrim();
-		if ($this->carrier === 'no3Gkddi') {
-			die('KDDIの古い機種ではこのページを表示できません');
-		}
-		$this->_getSerial();
+		$this->setCarrier($this->userAgent);
+		$this->setSerial();
 	}
 	
-	function getData()
+	function setCarrier($userAgent = null)
 	{
-		return array(
-			'carrier'=>$this->carrier,
-			'serial'=>$this->serial,
-		);
-	}
+		if (is_null($userAgent)) {
+			$userAgent = $this->userAgent = env('HTTP_USER_AGENT');
+		}
 
-	function _discrim()
-	{
-		foreach ($this->agents as $carrier=>$regix) {
+		foreach ($this->_agents as $carrier=>$regix) {
 			if (is_array($regix)) {
 				foreach ($regix as $reg) {
-					if (preg_match($reg, $this->userAgent)) {
-						$this->carrier = $carrier;
-						return true;
+					if (preg_match($reg, $userAgent)) {
+						return $this->carrier = $carrier;
 					}
 				}
 			}
 			else {
-				if (preg_match($regix, $this->userAgent)) {
-					$this->carrier = $carrier;
-					return true;
+				if (preg_match($regix, $userAgent)) {
+					return $this->carrier = $carrier;
 				}
 			}
 		}
-		return false;
+		return $this->carrier = null;
 	}
 	
 	// http://xxxxxxxx?guid=ON DoCoMo
-	function _getSerial()
+	function setSerial()
 	{
 		$serial = null;
 		if ($this->carrier === 'docomo') {
@@ -70,7 +59,7 @@ class DiscriminantComponent extends Object {
 				$serial = $match[1];
 			}
 		}
-		elseif ($this->carrier === 'ezweb') {
+		elseif ($this->carrier === 'kddi') {
 			$serial = env('HTTP_X_UP_SUBNO');
 		}
 		return $this->serial = $serial;

@@ -1,19 +1,18 @@
 <?php
-App::import('Vendor', 'MobileKit.selectorToXPath',
-	array('file' => 'selectorToXPath.php'));
-
 class RenderComponent extends Object {
 	var $Controller = null;
-	var $components = array('MobileKit.Discriminant');
+	var $components = array('MobileKit.Mobile');
+
+	var $Mobile = null;
 	var $layoutPath = 'mobile';
 	var $viewPath = 'mobile';
-	var $mobile = array();
-	var $xhtml = null;
 
 	function initialize(&$controller)
 	{
-		$this->Controller = $controller;
-		$this->mobile = $this->Discriminant->getData();
+		$this->Controller =& $controller;
+		if ($this->isMobile()) {
+			mb_convert_variables('UTF-8', 'SJIS-win', $controller->data);
+		}
 	}
 	
 	function beforeRender(&$controller)
@@ -31,6 +30,8 @@ class RenderComponent extends Object {
 	{
 		if ($this->isMobile()) {
 			$controller->output = $this->_hankaku($controller->output);
+			$controller->output =
+				mb_convert_encoding($controller->output, 'SJIS-win', 'UTF-8');
 			header("Content-type: application/xhtml+xml");
 		}
 	}
@@ -40,22 +41,23 @@ class RenderComponent extends Object {
 		// 連続する半角スペースを半角スペース１としてカウント
 		$output = preg_replace('!\s+!', " ", $output);
 		// 全角を半角に変換
-		return mb_convert_kana($output, 'rank');
+		$output = mb_convert_kana($output, 'rank');
+		return $output;
 	}
 	
 	function isMobile()
 	{
-		return !is_null($this->mobile['carrier']);
+		return !is_null($this->Mobile->carrier);
 	}
 
 	function getCarrier()
 	{
-		return $this->mobile['carrier'];
+		return $this->Mobile->carrier;
 	}
 
 	function getSerial()
 	{
-		return $this->mobile['serial'];
+		return $this->Mobile->serial;
 	}
 }
 ?>
