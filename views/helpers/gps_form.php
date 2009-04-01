@@ -1,14 +1,14 @@
 <?php
-App::import('Component', 'MobileKit.Discriminant');
+App::import('Component', 'MobileKit.Mobile');
 
 class GpsFormHelper extends AppHelper {
 	var $helpers = array('Form');
-	var $mobile = null;
+	var $Mobile = null;
 	
 	function beforeRender()
 	{
-		$this->mobile =& ClassRegistry::init(
-			'MobileKit.DiscriminantComponent', 'Component')->getData();
+		$this->Mobile =& ClassRegistry::init(
+			'MobileKit.MobileComponent', 'Component')
 	}
 }
 ?>
