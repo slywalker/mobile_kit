@@ -41,7 +41,7 @@ class RenderComponent extends Object {
 	function _hankaku($output)
 	{
 		// 連続する半角スペースを半角スペース１としてカウント
-		$output = preg_replace('!\s+!', ' ', $output);
+		//$output = preg_replace('!\s+!', ' ', $output);
 		// 全角を半角に変換
 		$output = mb_convert_kana($output, 'rank');
 		return $output;
@@ -77,6 +77,7 @@ class RenderComponent extends Object {
 				$css .= file_get_contents($url);
 			}
 		}
+		$dom->clear();
 		// CSSのパース
 		$styles = $this->_parseCss($css);
 		// a:*をヘッダ内に格納
@@ -92,7 +93,7 @@ class RenderComponent extends Object {
 		$html = preg_replace('/<\/head>/', $css.' </head>', $html);
 		
 		// bodyを取り出す
-		preg_match('/<body>.*<\/body>/', $html, $match);
+		preg_match('/<body[^>]*>.*<\/body>/', $html, $match);
 		$dom = new simple_html_dom;
 		$dom->load($match[0], true);
 		// インライン化
@@ -100,14 +101,16 @@ class RenderComponent extends Object {
 			foreach ($dom->find($element) as $e) {
 				if (is_object($e)) {
 					if (isset($e->attr['style'])) {
-						$style = $e->attr['style'].$style;
+						$style .= $e->attr['style'];
 					}
-					$e->attr = array_merge($e->attr, array('style'=>$style));
+					$e->attr =
+						array_merge($e->attr, array('style'=>'"'.$style.'"'));
 				}
 			}
 		}
 		// html再構成
 		$body = $dom->save();
+		$dom->clear();
 		$html = preg_replace("/<body>.*<\/body>/", $body, $html);
 		$html = preg_replace("/> /", ">\n", $html);
 		$html = preg_replace("/ </", "\n<", $html);
