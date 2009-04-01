@@ -39,4 +39,47 @@ class RenderTestCase extends CakeTestCase {
 		$this->Controller->Render->Mobile->setCarrier($userAgent);
 		$this->assertFalse($this->Controller->Render->isMobile());
 	}
+	
+	function test_ParseCss()
+	{
+		$string = '
+		body {
+			background-color: #fff;
+			color: #000;
+		}
+		h1 {
+			font-weight: normal;
+			margin: 0;
+			padding: 0;
+			font-size: xx-small;
+		}
+		h1 span {
+			font-size: xx-small;
+		}
+		h2 {
+			font-weight: normal;
+			margin: 0 0 0 0;
+			padding: 0 0 0 0;
+			font-size: xx-small;
+			color: #fff;
+		}
+		#foo {
+			font-size: xx-small;
+		}
+		.bar {
+			font-size: xx-small;
+		}
+		';
+		$result = $this->Controller->Render->_parseCss($string);
+		
+		$expect = array(
+			'body' => 'background-color:#fff;color:#000;',
+			'h1' => 'font-weight:normal;margin:0;padding:0;font-size:xx-small;',
+			'h1 span' => 'font-size:xx-small;',
+			'h2' => 'font-weight:normal;margin:0 0 0 0;padding:0 0 0 0;font-size:xx-small;color:#fff;',
+			'#foo' => 'font-size:xx-small;',
+			'.bar' => 'font-size:xx-small;',
+		);
+		$this->assertEqual($expect, $result); 
+	}
 }

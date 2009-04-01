@@ -35,7 +35,7 @@ class RenderComponent extends Object {
 	function _hankaku($output)
 	{
 		// 連続する半角スペースを半角スペース１としてカウント
-		$output = preg_replace('!\s+!', " ", $output);
+		$output = preg_replace('!\s+!', ' ', $output);
 		// 全角を半角に変換
 		$output = mb_convert_kana($output, 'rank');
 		return $output;
@@ -54,6 +54,27 @@ class RenderComponent extends Object {
 	function getSerial()
 	{
 		return $this->Mobile->serial;
+	}
+	
+	function parseCss($file)
+	{
+		$string = file_get_contents($file);
+		return $this->__parseCss($string);
+	}
+	
+	function _parseCss($string)
+	{
+		$string = preg_replace('!\s+!', ' ', trim($string));
+		$string = preg_replace('!\s*{\s*!', '{', $string);
+		$string = preg_replace('!\s*:\s*!', ':', $string);
+		$string = preg_replace('!\s*;\s*!', ';', $string);
+		$string = preg_replace('!\s*}\s*!', '}', $string);
+		preg_match_all('/([^{]+){([^}]+)}/', $string, $matchs);
+		$results = array();
+		foreach ($matchs[0] as $key=>$match) {
+			$results[$matchs[1][$key]] = $matchs[2][$key];
+		}
+		return $results;
 	}
 }
 ?>
