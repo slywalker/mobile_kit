@@ -81,7 +81,7 @@ class RenderComponent extends Object {
 		$styles = $this->_parseCss($css);
 		// a:*をヘッダ内に格納
 		$css = '<style type="text/css"> <![CDATA['."\n";
-		$links = array('a:link', 'a:hover', 'a:forcus', 'a:visited');
+		$links = array('a:link', 'a:hover', 'a:focus', 'a:visited');
 		foreach ($links as $link) {
 			if (isset($styles[$link])) {
 				$css .= $link.'{'.$styles[$link].'}'."\n";
