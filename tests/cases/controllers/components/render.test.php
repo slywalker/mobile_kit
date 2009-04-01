@@ -47,11 +47,8 @@ class RenderTestCase extends CakeTestCase {
 			background-color: #fff;
 			color: #000;
 		}
-		h1 {
-			font-weight: normal;
-			margin: 0;
-			padding: 0;
-			font-size: xx-small;
+		a:hover {
+			color: #000;
 		}
 		h1 span {
 			font-size: xx-small;
@@ -74,12 +71,41 @@ class RenderTestCase extends CakeTestCase {
 		
 		$expect = array(
 			'body' => 'background-color:#fff;color:#000;',
-			'h1' => 'font-weight:normal;margin:0;padding:0;font-size:xx-small;',
+			'a:hover' => 'color:#000;',
 			'h1 span' => 'font-size:xx-small;',
 			'h2' => 'font-weight:normal;margin:0 0 0 0;padding:0 0 0 0;font-size:xx-small;color:#fff;',
 			'#foo' => 'font-size:xx-small;',
 			'.bar' => 'font-size:xx-small;',
 		);
 		$this->assertEqual($expect, $result); 
+	}
+	
+	function testParseHtml()
+	{
+		$html = '
+		<?xml version="1.0" encoding="Shift_JIS"?>
+		<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+		<head>
+			<meta http-equiv="content-type" content="application/xhtml+xml; charset=Shift_JIS" />
+			<meta content="width=320, minimum-scale=0.5" name="viewport" />
+			<title>Test</title>
+			<link href="/cake/fseek/css/cake.generic.css" type="text/css" rel="stylesheet">
+		</head>
+		<body>
+			<h1>
+				<span>
+					風を求めて。風俗GPS検索
+				</span>
+			</h1>
+			<span>
+				Copyrights(C)2009<br />
+				fseek.jp<br />
+				All rights reserved
+			</span>
+		</body>
+		</html>
+		';
+		$result = $this->Controller->Render->inlineCss($html);
 	}
 }

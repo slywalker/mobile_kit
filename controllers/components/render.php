@@ -1,4 +1,7 @@
 <?php
+App::import('Vendor', 'MobileKit.simple_html_dom',
+	array('file'=>'simplehtmldom/simple_html_dom.php'));
+
 class RenderComponent extends Object {
 	var $components = array('MobileKit.Mobile');
 	var $layoutPath = 'mobile';
@@ -25,6 +28,9 @@ class RenderComponent extends Object {
 	function shutdown(&$controller)
 	{
 		if ($this->isMobile()) {
+			if ($this->Mobile->carrier === 'docomo') {
+				$controller->output = $this->inlineCss($controller->output);
+			}
 			$controller->output = $this->_hankaku($controller->output);
 			$controller->output =
 				mb_convert_encoding($controller->output, 'SJIS-win', 'UTF-8');
@@ -55,16 +61,64 @@ class RenderComponent extends Object {
 	{
 		return $this->Mobile->serial;
 	}
-	
-	function parseCss($file)
+
+	function inlineCss($html)
 	{
-		$string = file_get_contents($file);
-		return $this->__parseCss($string);
+		// パースしやすいように無駄な空白や改行を取り除く
+		$html = preg_replace('!\s+!', ' ', trim($html));
+		// headからCSSファイルを取り出す
+		preg_match('/<head>.*<\/head>/', $html, $match);
+		$dom = new simple_html_dom;
+		$dom->load($match[0], true);
+		$css = '';
+		foreach ($dom->find('link[type=text/css]') as $e) {
+			if (is_object($e)) {
+				$url = 'http://'.env('HTTP_HOST').$e->href;
+				$css .= file_get_contents($url);
+			}
+		}
+		// CSSのパース
+		$styles = $this->_parseCss($css);
+		// a:*をヘッダ内に格納
+		$css = '<style type="text/css"> <![CDATA['."\n";
+		$links = array('a:link', 'a:hover', 'a:forcus', 'a:visited');
+		foreach ($links as $link) {
+			if (isset($styles[$link])) {
+				$css .= $link.'{'.$styles[$link].'}'."\n";
+				unset($styles[$link]);
+			}
+		}
+		$css .= ']]> </style>';
+		$html = preg_replace('/<\/head>/', $css.' </head>', $html);
+		
+		// bodyを取り出す
+		preg_match('/<body>.*<\/body>/', $html, $match);
+		$dom = new simple_html_dom;
+		$dom->load($match[0], true);
+		// インライン化
+		foreach ($styles as $element=>$style) {
+			foreach ($dom->find($element) as $e) {
+				if (is_object($e)) {
+					if (isset($e->attr['style'])) {
+						$style = $e->attr['style'].$style;
+					}
+					$e->attr = array_merge($e->attr, array('style'=>$style));
+				}
+			}
+		}
+		// html再構成
+		$body = $dom->save();
+		$html = preg_replace("/<body>.*<\/body>/", $body, $html);
+		$html = preg_replace("/> /", ">\n", $html);
+		$html = preg_replace("/ </", "\n<", $html);
+		return $html;
 	}
-	
+
 	function _parseCss($string)
 	{
-		$string = preg_replace('!\s+!', ' ', trim($string));
+		$string = preg_replace('!\s+!', ' ', $string);
+		$string = preg_replace('/\/\*(?:(?!\*\/).)*\*\//', '', $string);
+		$string = trim($string);
 		$string = preg_replace('!\s*{\s*!', '{', $string);
 		$string = preg_replace('!\s*:\s*!', ':', $string);
 		$string = preg_replace('!\s*;\s*!', ';', $string);
