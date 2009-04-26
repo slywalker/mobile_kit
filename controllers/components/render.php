@@ -6,6 +6,18 @@ class RenderComponent extends Object {
 	var $components = array('MobileKit.Mobile');
 	var $layoutPath = 'mobile';
 	var $viewPath = 'mobile';
+	/**
+	 * 強制的にCSSをインライン化
+	 *
+	 * @var boolen
+	 */
+	var $inlineCss = false;
+	/**
+	 * 強制的にSJIS出力
+	 *
+	 * @var boolen
+	 */
+	var $encodingSjis = false;
 
 	function initialize(&$controller)
 	{
@@ -27,14 +39,16 @@ class RenderComponent extends Object {
 	
 	function shutdown(&$controller)
 	{
-		if ($this->isMobile()) {
-			if ($this->Mobile->carrier === 'docomo') {
+		if ($this->encodingSjis || $this->isMobile()) {
+			if ($this->inlineCss || $this->Mobile->carrier === 'docomo') {
 				$controller->output = $this->inlineCss($controller->output);
 			}
 			$controller->output = $this->_hankaku($controller->output);
 			$controller->output =
 				mb_convert_encoding($controller->output, 'SJIS-win', 'UTF-8');
-			header("Content-type: application/xhtml+xml");
+			if ($this->isMobile()) {
+				header("Content-type: application/xhtml+xml");
+			}
 		}
 	}
 	
@@ -101,7 +115,7 @@ class RenderComponent extends Object {
 			foreach ($dom->find($element) as $e) {
 				if (is_object($e)) {
 					if (isset($e->attr['style'])) {
-						$style .= $e->attr['style'];
+						$style .= str_replace('"', '', $e->attr['style']);
 					}
 					$e->attr =
 						array_merge($e->attr, array('style'=>'"'.$style.'"'));
