@@ -91,12 +91,10 @@ class RenderTestCase extends CakeTestCase {
 	<meta content="width=320, minimum-scale=0.5" name="viewport" />
 	<meta name="description" content=""/><meta name="keywords" content=""/>
 	<title>page_title</title>
-	<link rel="stylesheet" type="text/css" href="/cake/offical/themed/_abc_umeda/css/mobile.css" />
 </head>
 <body>
 	<div>
 		<h1><span>h1_title</span></h1>
-		<img src="/cake/offical/themed/_abc_umeda/img/main.jpg" alt="" />
 		<div>
 			<h2><span>h2_title</span></h2>
 		</div>
@@ -122,38 +120,44 @@ class RenderTestCase extends CakeTestCase {
 </html>
 		';
 		
-		/*
-		$html = '
+		$expect = '
 <?xml version="1.0" encoding="Shift_JIS"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=Shift_JIS" />
-<meta content="width=320, minimum-scale=0.5" name="viewport" />
-<meta name="description" content=""/><meta name="keywords" content=""/>
-<title>page_title</title>
-<link rel="stylesheet" type="text/css" href="/cake/offical/themed/_abc_umeda/css/mobile.css" />
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=Shift_JIS" />
+	<meta content="width=320, minimum-scale=0.5" name="viewport" />
+	<meta name="description" content=""/><meta name="keywords" content=""/>
+	<title>page_title</title>
 </head>
 <body>
-<div id="header">
-<h1><span>h1_title</span></h1>
-<img src="/cake/offical/themed/_abc_umeda/img/main.jpg" alt="" />
-<div>
-<h2><span style="hoge:fuga;">h2_title</span></h2>
-</div>
-<hr />
-</div>
-<div>
 	<div>
-	<ul>
-	<li><a href="#">testLink1</a></li>
-	<li><a href="#">testLink1</a></li>
-	</ul>
+		<h1><span>h1_title</span></h1>
+		<div>
+			<h2><span>h2_title</span></h2>
+		</div>
+		<hr />
 	</div>
-</div>
+	<div>
+		<div>
+		<ul>
+		<li><a href="#">testLink1</a></li>
+		<li><a href="#">testLink1</a></li>
+		</ul>
+		</div>
+	</div>
+	<div>
+		<hr />
+		<span>
+		Copyrights(C)2009<br />
+		someone<br />
+		All rights reserved
+		</span>
+	</div>
 </body>
 </html>
-			';*/
+			';
 		$result = $this->Controller->Render->inlineCss($html);
+		//$this->assertEqual($expect, $result); 
 	}
 }
