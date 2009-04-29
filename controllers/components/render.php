@@ -26,6 +26,16 @@ class RenderComponent extends Object {
 		}
 	}
 	
+	function startup(&$controller)
+	{
+		if ($this->isMobile()) {
+			// disable DebugKit
+			if (isset($controller->Toolbar)) {
+				$controller->Toolbar->enabled = false;
+			}
+		}
+	}
+	
 	function beforeRender(&$controller)
 	{
 		if ($this->isMobile()) {
