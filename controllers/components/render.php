@@ -33,6 +33,14 @@ class RenderComponent extends Object {
 			if (isset($controller->Toolbar)) {
 				$controller->Toolbar->enabled = false;
 			}
+			$carrier = $this->Mobile->carrier;
+			$uid = $this->Mobile->uid;
+			$display = array(
+				'width'=>$this->Mobile->displayWidth,
+				'height'=>$this->Mobile->displayHeight,
+			);
+			$controller->params['mobile']
+				= compact('carrier', 'serial', 'display');
 		}
 	}
 	
@@ -81,9 +89,9 @@ class RenderComponent extends Object {
 		return $this->Mobile->carrier;
 	}
 
-	function getSerial()
+	function getUid()
 	{
-		return $this->Mobile->serial;
+		return $this->Mobile->uid;
 	}
 
 	function inlineCss($html)
