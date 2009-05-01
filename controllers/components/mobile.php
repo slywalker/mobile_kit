@@ -79,7 +79,7 @@ class MobileComponent extends Object {
 			return $this->uid = null;
 		}
 
-		$uid = null;
+		$display = array();
 		if ($carrier === 'docomo') {
 			$display = array();
 		}
