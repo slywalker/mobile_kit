@@ -21,8 +21,10 @@ class RenderComponent extends Object {
 
 	function initialize(&$controller)
 	{
-		if ($this->isMobile() && $controller->data) {
-			mb_convert_variables('UTF-8', 'SJIS-win', $controller->data);
+		if ($this->isMobile()) {
+			if ($controller->data) {
+				mb_convert_variables('UTF-8', 'SJIS-win', $controller->data);
+			}
 		}
 	}
 	
