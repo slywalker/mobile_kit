@@ -24,6 +24,7 @@ class RenderComponent extends Object {
 		if ($this->isMobile()) {
 			if (isset($controller->params['url'][Configure::read('Session.cookie')])) {
 				$this->Session->id($controller->params['url'][Configure::read('Session.cookie')]);
+				$this->Session->renew();
 			}
 			if ($controller->data) {
 				mb_convert_variables('UTF-8', 'SJIS-win', $controller->data);
