@@ -58,6 +58,10 @@ class RenderComponent extends Object {
 		}
 	}
 	
+	function beforeRedirect(&$controller, $url, $status = null, $exit = true) {
+		return $this->_url($url);
+	}
+	
 	function shutdown(&$controller) {
 		if ($this->encodingSjis || $this->isMobile()) {
 			if ($this->inlineCss || $this->Mobile->carrier === 'docomo') {
