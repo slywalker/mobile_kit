@@ -1,9 +1,10 @@
 <?php
+// このコンポーネントの呼び出しは一番最初
 App::import('Vendor', 'MobileKit.simple_html_dom',
 	array('file'=>'simplehtmldom/simple_html_dom.php'));
 
 class RenderComponent extends Object {
-	var $components = array('MobileKit.Mobile');
+	var $components = array('Session', 'MobileKit.Mobile');
 	var $layoutPath = 'mobile';
 	var $viewPath = 'mobile';
 	/**
@@ -19,17 +20,18 @@ class RenderComponent extends Object {
 	 */
 	var $encodingSjis = false;
 
-	function initialize(&$controller)
-	{
+	function initialize(&$controller) {
 		if ($this->isMobile()) {
+			if (isset($controller->params['url'][Configure::read('Session.cookie')])) {
+				$this->Session->id($controller->params['url'][Configure::read('Session.cookie')]);
+			}
 			if ($controller->data) {
 				mb_convert_variables('UTF-8', 'SJIS-win', $controller->data);
 			}
 		}
 	}
 	
-	function startup(&$controller)
-	{
+	function startup(&$controller) {
 		if ($this->isMobile()) {
 			// disable DebugKit
 			if (isset($controller->Toolbar)) {
@@ -46,8 +48,7 @@ class RenderComponent extends Object {
 		}
 	}
 	
-	function beforeRender(&$controller)
-	{
+	function beforeRender(&$controller) {
 		if ($this->isMobile()) {
 			$controller->layoutPath = $this->layoutPath;
 			if ($controller->viewPath !== 'errors') {
@@ -57,8 +58,7 @@ class RenderComponent extends Object {
 		}
 	}
 	
-	function shutdown(&$controller)
-	{
+	function shutdown(&$controller) {
 		if ($this->encodingSjis || $this->isMobile()) {
 			if ($this->inlineCss || $this->Mobile->carrier === 'docomo') {
 				$controller->output = $this->inlineCss($controller->output);
@@ -72,8 +72,7 @@ class RenderComponent extends Object {
 		}
 	}
 	
-	function _hankaku($output)
-	{
+	function _hankaku($output) {
 		// 連続する半角スペースを半角スペース１としてカウント
 		//$output = preg_replace('!\s+!', ' ', $output);
 		// 全角を半角に変換
@@ -81,23 +80,19 @@ class RenderComponent extends Object {
 		return $output;
 	}
 	
-	function isMobile()
-	{
+	function isMobile() {
 		return !is_null($this->Mobile->carrier);
 	}
 
-	function getCarrier()
-	{
+	function getCarrier() {
 		return $this->Mobile->carrier;
 	}
 
-	function getUid()
-	{
+	function getUid() {
 		return $this->Mobile->uid;
 	}
 
-	function inlineCss($html)
-	{
+	function inlineCss($html) {
 		// パースしやすいように無駄な空白や改行を取り除く
 		$html = preg_replace('!\s+!', ' ', trim($html));
 		// headからCSSファイルを取り出す
@@ -132,13 +127,28 @@ class RenderComponent extends Object {
 		$dom->load($match[0], true);
 		// インライン化
 		foreach ($styles as $element=>$style) {
-			foreach ($dom->find($element) as $e) {
+			$es = $dom->find($element);
+			foreach ($es as $e) {
 				if (is_object($e)) {
 					if (isset($e->attr['style'])) {
 						$style .= str_replace('"', '', $e->attr['style']);
 					}
-					$e->attr =
-						array_merge($e->attr, array('style'=>'"'.$style.'"'));
+					$e->attr = array_merge($e->attr, array('style'=>'"'.$style.'"'));
+				}
+			}
+		}
+		// session_idの付与
+		$targets = array('a', 'form');
+		foreach ($targets as $target) {
+			$es = $dom->find($target);
+			foreach ($es as $e) {
+				if ('a' === $target && isset($e->attr['href'])) {
+					$url = $e->attr['href'];
+					$e->attr['href'] = $this->_url($url);
+				}
+				if ('form' === $target && isset($e->attr['action'])) {
+					$url = $e->attr['action'];
+					$e->attr['action'] = $this->_url($url);
 				}
 			}
 		}
@@ -150,9 +160,19 @@ class RenderComponent extends Object {
 		$html = preg_replace("/ </", "\n<", $html);
 		return $html;
 	}
+	
+	function _url($url) {
+		if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (!strncmp($url, '#', 1))) {
+			return $url;
+		}
+		$params = Configure::read('Session.cookie').'='.$this->Session->id();
+		if (strpos($url, '?')) {
+			return $url.'&'.$params;
+		}
+		return $url.'?'.$params;
+	}
 
-	function _parseCss($string)
-	{
+	function _parseCss($string) {
 		$string = preg_replace('!\s+!', ' ', $string);
 		$string = preg_replace('/\/\*(?:(?!\*\/).)*\*\//', '', $string);
 		$string = trim($string);

@@ -1,24 +1,36 @@
 <?php
+App::import('Core', array('Controller', 'Object'));
 App::import('Component', 'MobileKit.Render');
 App::import('Component', 'MobileKit.Mobile');
 
 class TestRenderComponent extends RenderComponent {
 }
 
+class RenderTestController extends Controller {
+	var $uses = array();
+	var $components = array('MobileKit.Render');
+	function session_id() {
+		return $this->Session->id();
+	}
+}
+
 class RenderTestCase extends CakeTestCase {
 	
-	function setUp()
-	{
-		$this->Controller =& ClassRegistry::init('Controller');
-		$this->Controller->Component =& ClassRegistry::init('Component');
-		$this->Controller->Render =&
-			ClassRegistry::init('TestRenderComponent', 'Component');
-		$this->Controller->Render->Mobile =&
-			ClassRegistry::init('MobileComponent', 'Component');
+	function setUp() {
+		$this->Controller =& ClassRegistry::init('RenderTestController');
+		$this->Controller->Component->init($this->Controller);
+		$this->Controller->Render->initialize($this->Controller);
 	}
 	
-	function testIsMobile()
-	{
+	function testIsMobile() {
+		//session_id('abcdefghijklmnopqrstuv0987654321');
+		//$this->Controller->Session->write('Test', 'hoge');
+		
+		//session_id('abcdefghijklmnopqrstuv1234567890');
+		//$this->Controller->Session->write('Test', 'fuga');
+		//debug($this->Controller->Session->read('Test'));
+		//debug($this->Controller->session_id());
+		
 		$userAgent = 'Mozilla/5.0';
 		$this->Controller->Render->Mobile->setCarrier($userAgent);
 		$this->assertFalse($this->Controller->Render->isMobile());
@@ -40,8 +52,7 @@ class RenderTestCase extends CakeTestCase {
 		$this->assertFalse($this->Controller->Render->isMobile());
 	}
 	
-	function test_ParseCss()
-	{
+	function test_ParseCss() {
 		$string = '
 		body {
 			background-color: #fff;
@@ -80,8 +91,7 @@ class RenderTestCase extends CakeTestCase {
 		$this->assertEqual($expect, $result); 
 	}
 	
-	function testParseHtml()
-	{
+	function testParseHtml() {
 		$html = '
 <?xml version="1.0" encoding="Shift_JIS"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
