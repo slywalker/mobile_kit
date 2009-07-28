@@ -60,7 +60,7 @@ class RenderComponent extends Object {
 	}
 	
 	function beforeRedirect(&$controller, $url, $status = null, $exit = true) {
-		if ($this->mobile) {
+		if ($this->isMobile()) {
 			return $this->_url($url);
 		}
 		return array();
