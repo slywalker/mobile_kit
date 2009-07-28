@@ -60,7 +60,7 @@ class RenderComponent extends Object {
 	}
 	
 	function beforeRedirect(&$controller, $url, $status = null, $exit = true) {
-		if ($this->isMobile()) {
+		if ($this->Mobile->carrier === 'docomo') {
 			return $this->_url($url);
 		}
 		return $url;
