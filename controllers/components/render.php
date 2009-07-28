@@ -63,7 +63,7 @@ class RenderComponent extends Object {
 		if ($this->isMobile()) {
 			return $this->_url($url);
 		}
-		return array();
+		return $url;
 	}
 	
 	function shutdown(&$controller) {
