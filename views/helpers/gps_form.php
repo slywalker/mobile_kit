@@ -8,7 +8,7 @@ class GpsFormHelper extends AppHelper {
 	function beforeRender()
 	{
 		$this->Mobile =& ClassRegistry::init(
-			'MobileKit.MobileComponent', 'Component')
+			'MobileKit.MobileComponent', 'Component');
 	}
 }
 ?>
